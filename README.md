@@ -34,11 +34,14 @@ cloud using GitHub, entirely from your phone's browser, for free.
 
 ## Part D — Load Nova's AI brain (no adb needed)
 
-1. In your phone browser, go to **huggingface.co/litert-community/gemma-4-E2B-it-litert-lm**
-2. Sign in / create a free Hugging Face account if prompted (needed to accept Google's model license)
-3. Download the `.task` file from the Files tab (~2-3GB — use WiFi)
-4. Open the **Nova app** → tap **"Load AI Model"** → a file picker opens → navigate to your Downloads folder → select the `.task` file you just downloaded
-5. Nova copies it into her own storage and loads it — this takes a minute for a file this size, watch the status text
+1. In your phone browser, go to **huggingface.co/litert-community/Gemma3-1B-IT**
+2. Sign in / create a free Hugging Face account if prompted, then click "Acknowledge license" (needed once to accept Google's Gemma license)
+3. Go to the **Files** tab and download exactly this file: **`gemma3-1b-it-int4.task`** (~555MB — use WiFi).
+   ⚠️ Don't download any file ending in **`-web.task`** or **`.litertlm`** — those are for browsers/a different runtime and will NOT load in Nova.
+4. Open the **Nova app** → tap **"Load AI Model"** → a file picker opens → navigate to your Downloads folder → select `gemma3-1b-it-int4.task`
+5. Nova copies it into her own storage and loads it — this takes maybe 30-60 seconds for a file this size, watch the status text
+
+**Why this specific model:** Google put the older MediaPipe LLM Inference API (which Nova's code uses) into maintenance mode and newer models (Gemma 4, Gemma 3n) mostly ship in a different `.litertlm` format for a separate library. Gemma 3 1B is the newest/largest model still confirmed to ship a real Android-compatible `.task` file for Nova's exact setup — so it's the safest choice without changing Nova's code or dependencies.
 
 After this one-time setup, Nova works fully offline for her core thinking.
 

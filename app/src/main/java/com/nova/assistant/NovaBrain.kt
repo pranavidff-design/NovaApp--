@@ -11,9 +11,18 @@ import java.io.File
 /**
  * NovaBrain — runs entirely ON-DEVICE. No API key, no internet, no cost.
  *
- * Uses Google's MediaPipe LLM Inference API to run a local Gemma 4 model file.
- * The model itself (a multi-GB .task file) is NOT bundled in this project —
- * you download it once and push it to the phone (see README: "Downloading the model").
+ * Uses Google's MediaPipe LLM Inference API (com.google.mediapipe:tasks-genai) to run
+ * a local Gemma 3 1B model file (~555MB .task, NOT the "-web" variant — that's a
+ * different build meant for browsers, not this Android library).
+ *
+ * Why Gemma 3 1B and not a newer Gemma model: Google has put the MediaPipe LLM
+ * Inference API used here into "maintenance-only mode" and newer model releases
+ * (Gemma 4, Gemma 3n) ship primarily as .litertlm files for the newer, separate
+ * LiteRT-LM library — not this one. Gemma 3 1B is the largest/newest model still
+ * confirmed to ship a genuine (non-web) .task file compatible with this exact
+ * dependency. Migrating to LiteRT-LM would mean a different Gradle dependency and
+ * a different Kotlin API — a bigger change than a file swap, so it's intentionally
+ * not done here. See README: "Downloading the model" for the exact download link.
  *
  * API shape (this matters — getting it wrong is what broke the last build):
  * - LlmInference (the "engine") is created ONCE from the model file. It only
@@ -46,7 +55,7 @@ class NovaBrain(private val context: Context) {
     // Model file location on the phone. Defaults here, but can be overridden by
     // copyPickedModelFile() if the user selects it via the in-app file picker
     // instead of pushing it with adb (phone-only setups need this path).
-    private var modelPath = "${context.getExternalFilesDir(null)}/models/gemma-4-e2b.task"
+    private var modelPath = "${context.getExternalFilesDir(null)}/models/gemma3-1b-it-int4.task"
 
     /** Call this after the user picks the downloaded .task file via Storage Access Framework.
      *  Copies it into the app's own storage so it persists and MediaPipe can read it directly. */
@@ -54,7 +63,7 @@ class NovaBrain(private val context: Context) {
         try {
             val destDir = File("${context.getExternalFilesDir(null)}/models")
             if (!destDir.exists()) destDir.mkdirs()
-            val destFile = File(destDir, "gemma-4-e2b.task")
+            val destFile = File(destDir, "gemma3-1b-it-int4.task")
             context.contentResolver.openInputStream(uri)?.use { input ->
                 destFile.outputStream().use { output -> input.copyTo(output) }
             }
